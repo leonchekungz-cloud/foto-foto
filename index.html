@@ -3,182 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Outfit Generator — Tanpa API Key</title>
-    <script src="https://js.puter.com/v2/"></script>
+    <title>AI Ganti Baju</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #f8f9fa; padding: 2rem; color: #333; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        h1 { text-align: center; margin-bottom: 2rem; font-size: 2rem; }
-
-        .info-box { background: #e8f5e9; border: 2px solid #4caf50; border-radius: 12px; padding: 1rem; margin-bottom: 2rem; text-align: center; }
-        .info-box strong { color: #2e7d32; }
-
-        .upload-section { background: white; border-radius: 16px; padding: 2rem; text-align: center; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .upload-box { border: 2px dashed #ddd; border-radius: 12px; padding: 2.5rem; cursor: pointer; transition: 0.3s; }
-        .upload-box:hover { border-color: #d32f2f; background: #fef2f2; }
-        .upload-box img { width: 160px; height: 160px; border-radius: 12px; object-fit: cover; margin-bottom: 1rem; display: none; }
-        .upload-box p { color: #666; margin-top: 0.5rem; }
-        input[type="file"] { display: none; }
-
-        .outfit-section { background: white; border-radius: 16px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .outfit-section h2 { margin-bottom: 1.5rem; font-size: 1.3rem; }
-        .outfit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; }
-        .outfit-card { border: 3px solid transparent; border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.3s; }
-        .outfit-card:hover, .outfit-card.selected { border-color: #d32f2f; transform: scale(1.03); }
-        .outfit-card img { width: 100%; aspect-ratio: 1; object-fit: cover; }
-        .outfit-card p { text-align: center; padding: 0.75rem; font-weight: 600; }
-
-        .btn-generate { display: block; width: 100%; max-width: 400px; margin: 0 auto 2rem; padding: 1rem; background: linear-gradient(135deg, #d32f2f, #b71c1c); color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(211,47,47,0.35); }
-        .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        .loading { text-align: center; padding: 2rem; display: none; }
-        .loading.active { display: block; }
-        .spinner { width: 50px; height: 50px; border: 4px solid #eee; border-top-color: #d32f2f; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .result-section { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: none; }
-        .result-section.active { display: block; }
-        .result-img { max-width: 400px; margin: 0 auto; border-radius: 12px; overflow: hidden; }
-        .result-img img { width: 100%; height: auto; }
-        .error-box { background: #ffebee; border-left: 4px solid #d32f2f; padding: 1rem; margin-top: 1rem; border-radius: 0 8px 8px 0; display: none; }
+        * {font-family:Arial,sans-serif; margin:0; padding:0; box-sizing:border-box;}
+        body {background:#f5f5f5; padding:20px;}
+        .wrap {max-width:600px; margin:0 auto; background:white; padding:25px; border-radius:12px;}
+        h1 {text-align:center; margin-bottom:20px; color:#222;}
+        .box {border:2px dashed #ccc; padding:30px; text-align:center; border-radius:10px; margin-bottom:20px; cursor:pointer;}
+        .box:hover {border-color:#d32f2f; background:#fff5f5;}
+        .box img {width:150px; height:150px; border-radius:8px; margin:10px 0; display:none; object-fit:cover;}
+        .btn {width:100%; padding:15px; background:#d32f2f; color:white; border:none; border-radius:10px; font-size:18px; font-weight:bold; cursor:pointer; margin-top:10px;}
+        .btn:disabled {opacity:0.5;}
+        .hasil {margin-top:20px; display:none;}
+        .hasil img {width:100%; border-radius:10px;}
+        .pilih {display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:20px 0;}
+        .item {border:2px solid #eee; padding:12px; text-align:center; border-radius:8px; cursor:pointer;}
+        .item.aktif {border-color:#d32f2f; background:#fff5f5;}
+        .loading {text-align:center; display:none; padding:20px;}
+        .spin {width:35px; height:35px; border:4px solid #ddd; border-top-color:#d32f2f; border-radius:50%; animation:putar 1s linear infinite; margin:0 auto 10px;}
+        @keyframes putar {to{transform:rotate(360deg);}}
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>✨ AI Outfit Generator — Tanpa API Key</h1>
+<div class="wrap">
+    <h1>✨ AI Ganti Baju</h1>
 
-        <div class="info-box">
-            ✅ <strong>Tanpa API Key!</strong> Pertama kali → login pakai akun Google/GitHub. Gratis!
-        </div>
+    <label class="box">
+        <input type="file" id="f" accept="image/*" style="display:none">
+        <img id="p" alt="Foto">
+        <p id="t">Klik di sini pilih foto</p>
+    </label>
 
-        <div class="upload-section">
-            <label class="upload-box" id="uploadBox">
-                <input type="file" id="photoInput" accept="image/*">
-                <img id="previewImg" alt="Pratinjau Foto">
-                <p id="uploadText">📤 Klik untuk Upload Foto Wajah</p>
-            </label>
-        </div>
-
-        <div class="outfit-section">
-            <h2>👔 Pilih Model Pakaian</h2>
-            <div class="outfit-grid" id="outfitGrid">
-                <div class="outfit-card" data-prompt="Foto anak laki-laki asia, mengenakan setelan jas hitam kemeja putih dasi hitam, gaya formal elegan, latar belakang polos abu-abu, pencahayaan studio, foto realistis berkualitas tinggi">
-                    <img src="https://picsum.photos/id/1005/300/300" alt="Jas Formal">
-                    <p>Jas Formal</p>
-                </div>
-                <div class="outfit-card" data-prompt="Foto anak laki-laki asia, mengenakan mantel panjang krem kemeja putih, gaya kasual rapi, latar belakang polos, foto realistis berkualitas tinggi">
-                    <img src="https://picsum.photos/id/1012/300/300" alt="Trenko">
-                    <p>Trenko Krem</p>
-                </div>
-                <div class="outfit-card" data-prompt="Foto anak laki-laki asia, mengenakan mantel cokelat baju rajut putih, gaya hangat elegan, latar belakang polos, foto realistis berkualitas tinggi">
-                    <img src="https://picsum.photos/id/1027/300/300" alt="Mantel Cokelat">
-                    <p>Mantel Cokelat</p>
-                </div>
-                <div class="outfit-card" data-prompt="Foto anak laki-laki asia, mengenakan baju rajut biru tua celana krem, gaya santai rapi, latar belakang polos, foto realistis berkualitas tinggi">
-                    <img src="https://picsum.photos/id/1025/300/300" alt="Rajut Kasual">
-                    <p>Rajut Kasual</p>
-                </div>
-                <div class="outfit-card" data-prompt="Foto anak laki-laki asia, mengenakan kemeja putih lengan panjang digulung, gaya bersih sederhana, latar belakang polos, foto realistis berkualitas tinggi">
-                    <img src="https://picsum.photos/id/1006/300/300" alt="Kemeja Putih">
-                    <p>Kemeja Putih</p>
-                </div>
-                <div class="outfit-card" data-prompt="Foto anak laki-laki asia, mengenakan jas abu-abu baju dalam hitam, gaya modern tegas, latar belakang polos, foto realistis berkualitas tinggi">
-                    <img src="https://picsum.photos/id/1024/300/300" alt="Jas Modern">
-                    <p>Jas Modern</p>
-                </div>
-            </div>
-        </div>
-
-        <button class="btn-generate" id="generateBtn">✨ Hasilkan Gambar Baru</button>
-
-        <div class="loading" id="loadingBox">
-            <div class="spinner"></div>
-            <p>Sedang membuat gambar... Mohon tunggu ⏳</p>
-        </div>
-
-        <div class="error-box" id="errorBox"></div>
-
-        <div class="result-section" id="resultSection">
-            <h2>📸 Hasil Anda</h2>
-            <div class="result-img" id="resultImgContainer"></div>
-        </div>
+    <div class="pilih">
+        <div class="item" data-q="anak laki-laki pakai jas hitam kemeja putih dasi, foto realistis">Jas Formal</div>
+        <div class="item" data-q="anak laki-laki pakai mantel cokelat baju putih, foto realistis">Mantel Cokelat</div>
+        <div class="item" data-q="anak laki-laki pakai kemeja putih rapi bersih, foto realistis">Kemeja Putih</div>
+        <div class="item" data-q="anak laki-laki pakai jas abu-abu baju hitam, foto realistis">Jas Modern</div>
     </div>
 
-    <script>
-        // ✅ HILANGKAN PESAN PUTER DI KONSOL
-        puter.quiet = true;
+    <button class="btn" id="b">Buat Gambar</button>
 
-        const photoInput = document.getElementById('photoInput');
-        const previewImg = document.getElementById('previewImg');
-        const uploadText = document.getElementById('uploadText');
-        const outfitCards = document.querySelectorAll('.outfit-card');
-        const generateBtn = document.getElementById('generateBtn');
-        const loadingBox = document.getElementById('loadingBox');
-        const resultSection = document.getElementById('resultSection');
-        const resultImgContainer = document.getElementById('resultImgContainer');
-        const errorBox = document.getElementById('errorBox');
+    <div class="loading" id="l"><div class="spin"></div><p>Tunggu sebentar...</p></div>
+    <div class="hasil" id="h"><h3>Hasil:</h3><img id="i" alt="Hasil"></div>
+</div>
 
-        let photoUploaded = false;
-        let selectedPrompt = null;
+<script>
+const f = document.getElementById('f');
+const p = document.getElementById('p');
+const t = document.getElementById('t');
+const b = document.getElementById('b');
+const l = document.getElementById('l');
+const h = document.getElementById('h');
+const i = document.getElementById('i');
+const items = document.querySelectorAll('.item');
 
-        // Upload foto
-        photoInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                previewImg.src = ev.target.result;
-                previewImg.style.display = 'block';
-                uploadText.textContent = '✅ Foto Dimuat!';
-                photoUploaded = true;
-            };
-            reader.readAsDataURL(file);
-        });
+let adaFoto = false;
+let pilihTeks = '';
 
-        // Pilih outfit
-        outfitCards.forEach(card => {
-            card.addEventListener('click', () => {
-                outfitCards.forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
-                selectedPrompt = card.dataset.prompt;
-            });
-        });
+f.addEventListener('change', e => {
+    if (!e.target.files[0]) return;
+    const r = new FileReader();
+    r.onload = x => { p.src = x.target.result; p.style.display = 'block'; t.innerText = '✅ Foto siap'; adaFoto = true; };
+    r.readAsDataURL(e.target.files[0]);
+});
 
-        // Generate pakai Puter — nama fungsi BENAR = txt2img
-        generateBtn.addEventListener('click', async () => {
-            if (!photoUploaded) { tampilError('⚠️ Upload foto dulu!'); return; }
-            if (!selectedPrompt) { tampilError('⚠️ Pilih pakaian dulu!'); return; }
+items.forEach(x => {
+    x.addEventListener('click', () => {
+        items.forEach(y => y.classList.remove('aktif'));
+        x.classList.add('aktif');
+        pilihTeks = x.dataset.q;
+    });
+});
 
-            generateBtn.disabled = true;
-            loadingBox.classList.add('active');
-            resultSection.classList.remove('active');
-            errorBox.style.display = 'none';
+b.addEventListener('click', async () => {
+    if (!adaFoto) { alert('Pilih foto dulu!'); return; }
+    if (!pilihTeks) { alert('Pilih gaya dulu!'); return; }
 
-            try {
-                // ✅ NAMA FUNGSI YANG BENAR: txt2img
-                const hasil = await puter.ai.txt2img(selectedPrompt);
+    b.disabled = true;
+    l.style.display = 'block';
+    h.style.display = 'none';
 
-                if (hasil && hasil.url) {
-                    resultImgContainer.innerHTML = `<img src="${hasil.url}" alt="Hasil Generasi">`;
-                    resultSection.classList.add('active');
-                } else {
-                    throw new Error('Tidak ada gambar dihasilkan');
-                }
+    const url = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(pilihTeks) + '?width=768&height=768&nologo=true';
+    i.src = url;
+    i.onload = () => { h.style.display = 'block'; };
+    i.onerror = () => { alert('Gagal memuat, coba lagi'); };
 
-            } catch (err) {
-                tampilError(`❌ Kesalahan: ${err.message || 'Silakan login dulu lalu coba lagi'}`);
-            } finally {
-                loadingBox.classList.remove('active');
-                generateBtn.disabled = false;
-            }
-        });
-
-        function tampilError(pesan) {
-            errorBox.textContent = pesan;
-            errorBox.style.display = 'block';
-        }
-    </script>
+    l.style.display = 'none';
+    b.disabled = false;
+});
+</script>
 </body>
 </html>
